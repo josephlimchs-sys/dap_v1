@@ -1,0 +1,60 @@
+/* dap-engine.css
+   Styling for the tour engine's own UI (spotlight, tooltip card, launcher).
+   Deliberately themed independent of the host page — this should always
+   read as "external guidance", never as native site chrome. */
+
+:root{
+  --dap-ink:#14121F;
+  --dap-accent:#7C5CFF;
+  --dap-accent-soft:#B7A6FF;
+  --dap-text:#F5F3FF;
+  --dap-text-dim:#A79FC4;
+  --dap-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+}
+
+.dap-launch{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:9998;
+  font-family:var(--dap-mono);font-size:12px;letter-spacing:.03em;
+  background:var(--dap-ink);color:var(--dap-text);border:none;
+  padding:12px 20px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:8px;
+  box-shadow:0 12px 30px -10px rgba(20,18,31,.5);
+}
+.dap-launch:hover{background:#1e1a30;}
+.dap-launch .dot{width:7px;height:7px;border-radius:50%;background:var(--dap-accent);animation:dapPulse 1.6s infinite;}
+@keyframes dapPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.dap-backdrop{
+  position:fixed;inset:0;background:rgba(10,9,18,.5);z-index:9990;
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+.dap-backdrop.on{opacity:1;pointer-events:auto;}
+
+.dap-spot{
+  position:fixed;z-index:9991;border-radius:10px;pointer-events:none;
+  box-shadow:0 0 0 4px var(--dap-accent), 0 0 0 9999px rgba(10,9,18,.55), 0 0 26px 4px rgba(124,92,255,.55);
+  transition:all .28s cubic-bezier(.4,0,.2,1);opacity:0;
+}
+.dap-spot.on{opacity:1;}
+
+.dap-card{
+  position:fixed;z-index:9992;width:240px;background:var(--dap-ink);color:var(--dap-text);
+  border-radius:12px;padding:16px 16px 14px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  box-shadow:0 20px 45px -15px rgba(10,9,18,.6);opacity:0;transform:translateY(6px);
+  transition:opacity .22s ease,transform .22s ease;pointer-events:none;
+}
+.dap-card.on{opacity:1;transform:translateY(0);pointer-events:auto;}
+.dap-eyebrow{font-family:var(--dap-mono);font-size:10px;letter-spacing:.08em;color:var(--dap-accent-soft);margin-bottom:8px;text-transform:uppercase;}
+.dap-card h4{margin:0 0 6px;font-size:14px;color:var(--dap-text);}
+.dap-card p{margin:0 0 14px;font-size:12.5px;line-height:1.5;color:var(--dap-text-dim);}
+.dap-foot{display:flex;align-items:center;justify-content:space-between;}
+.dap-dots{display:flex;gap:5px;}
+.dap-dots i{width:5px;height:5px;border-radius:50%;background:#3a3452;display:block;}
+.dap-dots i.done{background:var(--dap-accent-soft);}
+.dap-dots i.now{background:var(--dap-accent);width:14px;border-radius:3px;}
+.dap-btns{display:flex;gap:8px;}
+.dap-btns button{
+  font-family:var(--dap-mono);font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;
+  background:transparent;color:var(--dap-text-dim);border:none;cursor:pointer;padding:4px 2px;
+}
+.dap-btns button.next{background:var(--dap-accent);color:#fff;border-radius:6px;padding:6px 10px;}
+.dap-btns button:hover{color:var(--dap-text);}
