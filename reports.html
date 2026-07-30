@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DAP Tour — reports</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#F5F3FA;margin:0;color:#221c35;}
+  .wrap{max-width:640px;margin:0 auto;padding:32px 20px;}
+  h1{font-size:20px;margin:0 0 20px;}
+  .cards{display:flex;gap:16px;margin-bottom:28px;}
+  .card{background:#fff;border:1px solid #E1DCF0;border-radius:10px;padding:16px 20px;flex:1;}
+  .card .k{font-size:12px;color:#8b839f;text-transform:uppercase;letter-spacing:.03em;}
+  .card .v{font-size:26px;font-weight:700;margin-top:4px;}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E1DCF0;}
+  th,td{text-align:left;padding:10px 14px;font-size:13px;border-bottom:1px solid #EFEBF7;}
+  th{color:#8b839f;font-weight:600;font-size:11.5px;text-transform:uppercase;}
+  tr:last-child td{border-bottom:none;}
+  .empty{color:#8b839f;font-size:13.5px;}
+  select{font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid #E1DCF0;margin-bottom:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>DAP Tour — reports</h1>
+  <input id="tourId" placeholder="tour_id (optional filter)" style="font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid #E1DCF0;margin-bottom:16px;width:220px;">
+  <div class="cards">
+    <div class="card"><div class="k">Tours started</div><div class="v" id="started">–</div></div>
+    <div class="card"><div class="k">Completion rate</div><div class="v" id="rate">–</div></div>
+  </div>
+  <table>
+    <thead><tr><th>Step</th><th>Viewed</th><th>Completed</th><th>Drop-off</th></tr></thead>
+    <tbody id="rows"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+  </table>
+</div>
+<script>
+async function load() {
+  const tourId = document.getElementById('tourId').value.trim();
+  const url = '/api/report' + (tourId ? '?tour_id=' + encodeURIComponent(tourId) : '');
+  const res = await fetch(url);
+  const data = await res.json();
+
+  document.getElementById('started').textContent = data.started;
+  document.getElementById('rate').textContent = data.completion_rate + '%';
+
+  const rows = document.getElementById('rows');
+  if (!data.steps.length) {
+    rows.innerHTML = '<tr><td colspan="4" class="empty">No step data yet — run the tour a few times first.</td></tr>';
+    return;
+  }
+  rows.innerHTML = data.steps.map(s => {
+    const dropoff = s.viewed > 0 ? Math.round((1 - s.completed / s.viewed) * 100) : 0;
+    return `<tr><td>Step ${s.step_index + 1}</td><td>${s.viewed}</td><td>${s.completed}</td><td>${dropoff}%</td></tr>`;
+  }).join('');
+}
+document.getElementById('tourId').addEventListener('change', load);
+load();
+</script>
+</body>
+</html>
