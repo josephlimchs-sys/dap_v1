@@ -74,10 +74,19 @@ Rule types: `notEmpty`, `minLength` (needs a `value`), `pattern` (any regex). Se
 
 Events (`tour_started`, `step_viewed`, `step_completed`, `tour_completed`,
 `tour_abandoned`) POST to `/api/collect` and are stored via `api/_store.js`.
-Out of the box that's **in-memory** — fine for testing, but it resets on
-every cold start, so it's not for real production traffic.
 
-To make it persistent: create a [Vercel KV](https://vercel.com/docs/storage/vercel-kv)
+Out of the box, that store writes to a shared temp file rather than an
+in-memory array — this matters because `api/collect.js` and `api/report.js`
+are separate serverless functions, each running in its own process even
+during local `vercel dev`. A plain in-memory variable would give each
+function its own private copy of the data, so `report.js` would never see
+what `collect.js` wrote. The temp-file approach works around that for
+local testing on one machine.
+
+**This still isn't right for a real deployed site.** Once this is live on
+Vercel rather than your own machine, the filesystem isn't reliably shared
+or persistent across invocations either. To make it truly production-ready:
+create a [Vercel KV](https://vercel.com/docs/storage/vercel-kv)
 store and link it to the project — Vercel sets `KV_REST_API_URL` automatically,
 and `api/_store.js` switches to using it with no code changes needed on your part.
 Any other Redis-compatible store works the same way if you'd rather not use Vercel KV.
