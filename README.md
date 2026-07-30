@@ -32,6 +32,20 @@ plus a JSON config. Drop into any site — no build step, no framework required.
 </script>
 ```
 
+## Requiring the real action, not just a click on "Next"
+
+By default, "Next" is always clickable — the person can click through without ever touching the highlighted element. Two ways to require the real action instead:
+
+**A click on a button/link/element** — add `"action": "click"` to the step. "Next" disables, a hint appears ("Click the highlighted element to continue"), and clicking the actual spotlighted element is what advances the tour:
+
+```json
+{ "selector": "#add-expense-btn", "title": "Log an expense", "body": "...", "action": "click" }
+```
+
+**Filling in a form field correctly** — add a `validate` rule (see below). This is the same idea applied to typing instead of clicking.
+
+"Skip" always stays available on both, so a broken selector or a confused user isn't ever fully stuck.
+
 ## Guiding a form fill, not just a feature tour
 
 Add a `validate` rule to any step targeting an input:

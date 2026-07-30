@@ -77,7 +77,7 @@
     }
 
     next() {
-      this._teardownValidation();
+      this._teardownStepListener();
       this.emit('step_completed', { step_index: this.i });
       this.i++;
       if (this.i >= this.steps.length) {
@@ -88,9 +88,9 @@
       this._show();
     }
 
-    _teardownValidation() {
+    _teardownStepListener() {
       if (this._activeListener) {
-        this._activeListener.target.removeEventListener('input', this._activeListener.check);
+        this._activeListener.target.removeEventListener(this._activeListener.event, this._activeListener.handler);
         this._activeListener = null;
       }
     }
@@ -133,6 +133,8 @@
 
       if (step.validate) {
         this._wireValidation(target, step);
+      } else if (step.action === 'click') {
+        this._wireClickAction(target, step);
       } else {
         this._setNextEnabled(true);
       }
@@ -159,6 +161,22 @@
       this.card.querySelector('h4').textContent = step.title;
       this.card.querySelector('p').textContent = step.body;
       this._clearError();
+      this._clearHint();
+    }
+
+    _showHint(msg) {
+      let hint = this.card.querySelector('.dap-hint');
+      if (!hint) {
+        hint = document.createElement('p');
+        hint.className = 'dap-hint';
+        this.card.querySelector('.dap-foot').before(hint);
+      }
+      hint.textContent = msg;
+    }
+
+    _clearHint() {
+      const hint = this.card.querySelector('.dap-hint');
+      if (hint) hint.remove();
     }
 
     _setNextEnabled(enabled) {
@@ -210,7 +228,21 @@
         }
       };
       target.addEventListener('input', check);
-      this._activeListener = { target, check };
+      this._activeListener = { target, event: 'input', handler: check };
+    }
+
+    // The user must actually click the highlighted element to continue —
+    // "Next" is disabled so clicking it can't substitute for doing the
+    // real action. Skip remains available as an escape hatch.
+    _wireClickAction(target, step) {
+      this._setNextEnabled(false);
+      this._showHint(step.hint || 'Click the highlighted element to continue.');
+      const handler = () => {
+        // let the click's own effect run first, then advance
+        setTimeout(() => { if (this.i < this.steps.length) this.next(); }, 150);
+      };
+      target.addEventListener('click', handler);
+      this._activeListener = { target, event: 'click', handler };
     }
   }
 

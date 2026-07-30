@@ -3,7 +3,8 @@
     "selector": "#add-expense-btn",
     "fallback": ".primary-cta",
     "title": "Log an expense",
-    "body": "Add a new spend here — it drops straight into this month's report."
+    "body": "Add a new spend here — it drops straight into this month's report.",
+    "action": "click"
   },
   {
     "selector": "#signup-email",
