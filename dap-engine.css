@@ -43,7 +43,8 @@
   position:fixed;z-index:9992;width:240px;background:var(--dap-ink);color:var(--dap-text);
   border-radius:12px;padding:16px 16px 14px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   box-shadow:0 20px 45px -15px rgba(10,9,18,.6);opacity:0;transform:translateY(6px);
-  transition:opacity .22s ease,transform .22s ease;pointer-events:none;
+  transition:opacity .22s ease,transform .22s ease,top .28s cubic-bezier(.4,0,.2,1),left .28s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
 }
 .dap-card.on{opacity:1;transform:translateY(0);pointer-events:auto;}
 .dap-eyebrow{font-family:var(--dap-mono);font-size:10px;letter-spacing:.08em;color:var(--dap-accent-soft);margin-bottom:8px;text-transform:uppercase;}

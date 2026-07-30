@@ -48,8 +48,8 @@
         <div class="dap-foot">
           <div class="dap-dots"></div>
           <div class="dap-btns">
-            <button class="back">Back</button>
             <button class="skip">Skip</button>
+            <button class="back">Back</button>
             <button class="next">Next</button>
           </div>
         </div>`;
@@ -260,7 +260,7 @@
           this._clearError();
           this._setNextEnabled(true);
           if (step.autoAdvance !== false) {
-            setTimeout(() => { if (this.i < this.steps.length) this.next(); }, 350);
+            setTimeout(() => { if (this.i < this.steps.length) this.next(); }, 650);
           }
         } else if (target.value) {
           this._showError(step.validate.message || "That doesn't look right yet.");
@@ -282,7 +282,7 @@
       this._showHint(step.hint || 'Click the highlighted element to continue.');
       const handler = () => {
         // let the click's own effect run first, then advance
-        setTimeout(() => { if (this.i < this.steps.length) this.next(); }, 150);
+        setTimeout(() => { if (this.i < this.steps.length) this.next(); }, 400);
       };
       target.addEventListener('click', handler);
       this._activeListener = { target, event: 'click', handler };
