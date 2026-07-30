@@ -48,6 +48,7 @@
         <div class="dap-foot">
           <div class="dap-dots"></div>
           <div class="dap-btns">
+            <button class="back">Back</button>
             <button class="skip">Skip</button>
             <button class="next">Next</button>
           </div>
@@ -60,6 +61,7 @@
       document.body.append(this.backdrop, this.spot, this.card, this.launch);
 
       this.card.querySelector('.next').onclick = () => this.next();
+      this.card.querySelector('.back').onclick = () => this.back();
       this.card.querySelector('.skip').onclick = () => this.abandon();
       this.launch.onclick = () => this.start();
     }
@@ -95,6 +97,13 @@
         this.close();
         return;
       }
+      this._show();
+    }
+
+    back() {
+      if (this.i === 0) return;
+      this._teardownStepListener();
+      this.i--;
       this._show();
     }
 
@@ -190,6 +199,10 @@
       this.card.querySelector('.dap-eyebrow').textContent = `Step ${this.i + 1}/${this.steps.length}`;
       this.card.querySelector('h4').textContent = step.title;
       this.card.querySelector('p').textContent = step.body;
+      this.card.querySelector('.next').textContent = this.i === this.steps.length - 1 ? 'End' : 'Next';
+      const backBtn = this.card.querySelector('.back');
+      backBtn.disabled = this.i === 0;
+      backBtn.style.visibility = this.i === 0 ? 'hidden' : 'visible';
       this._clearError();
       this._clearHint();
     }
