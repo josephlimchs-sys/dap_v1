@@ -25,6 +25,16 @@
       // Creates the overlay DOM once, reused across every step.
       this.backdrop = document.createElement('div');
       this.backdrop.className = 'dap-backdrop';
+      this.shades = {
+        top: document.createElement('div'),
+        bottom: document.createElement('div'),
+        left: document.createElement('div'),
+        right: document.createElement('div'),
+      };
+      Object.values(this.shades).forEach(el => {
+        el.className = 'dap-shade';
+        this.backdrop.appendChild(el);
+      });
 
       this.spot = document.createElement('div');
       this.spot.className = 'dap-spot';
@@ -71,7 +81,7 @@
     start() {
       this.i = 0;
       this.emit('tour_started', {});
-      this.backdrop.classList.add('on');
+      Object.values(this.shades).forEach(el => el.classList.add('on'));
       this._renderDots();
       this._show();
     }
@@ -101,7 +111,7 @@
     }
 
     close() {
-      this.backdrop.classList.remove('on');
+      Object.values(this.shades).forEach(el => el.classList.remove('on'));
       this.spot.classList.remove('on');
       this.card.classList.remove('on');
     }
@@ -142,10 +152,30 @@
 
     _paintCardAt(target) {
       const box = target.getBoundingClientRect();
-      this.spot.style.top = (box.top - 6) + 'px';
-      this.spot.style.left = (box.left - 6) + 'px';
-      this.spot.style.width = (box.width + 12) + 'px';
-      this.spot.style.height = (box.height + 12) + 'px';
+      const pad = 6;
+      const holeTop = Math.max(box.top - pad, 0);
+      const holeLeft = Math.max(box.left - pad, 0);
+      const holeWidth = box.width + pad * 2;
+      const holeHeight = box.height + pad * 2;
+      const holeBottom = holeTop + holeHeight;
+      const holeRight = holeLeft + holeWidth;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      // Four rects tiling the viewport around the hole — this is what
+      // actually makes the highlighted element clickable/typeable again;
+      // without a real gap in the overlay, clicks land on the dimmed
+      // layer instead of the page underneath, no matter how convincing
+      // the spotlight looks visually.
+      Object.assign(this.shades.top.style,    { top: '0px', left: '0px', width: vw + 'px', height: holeTop + 'px' });
+      Object.assign(this.shades.bottom.style, { top: holeBottom + 'px', left: '0px', width: vw + 'px', height: Math.max(vh - holeBottom, 0) + 'px' });
+      Object.assign(this.shades.left.style,   { top: holeTop + 'px', left: '0px', width: holeLeft + 'px', height: holeHeight + 'px' });
+      Object.assign(this.shades.right.style,  { top: holeTop + 'px', left: holeRight + 'px', width: Math.max(vw - holeRight, 0) + 'px', height: holeHeight + 'px' });
+
+      this.spot.style.top = holeTop + 'px';
+      this.spot.style.left = holeLeft + 'px';
+      this.spot.style.width = holeWidth + 'px';
+      this.spot.style.height = holeHeight + 'px';
       this.spot.classList.add('on');
 
       let cardTop = box.top + box.height + 14;

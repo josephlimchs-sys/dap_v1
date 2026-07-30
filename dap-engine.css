@@ -24,14 +24,17 @@
 @keyframes dapPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
 .dap-backdrop{
-  position:fixed;inset:0;background:rgba(10,9,18,.5);z-index:9990;
-  opacity:0;pointer-events:none;transition:opacity .25s ease;
+  position:fixed;inset:0;z-index:9990;pointer-events:none;
 }
-.dap-backdrop.on{opacity:1;pointer-events:auto;}
+.dap-shade{
+  position:absolute;background:rgba(10,9,18,.55);pointer-events:none;
+  opacity:0;transition:opacity .25s ease;
+}
+.dap-shade.on{opacity:1;pointer-events:auto;}
 
 .dap-spot{
   position:fixed;z-index:9991;border-radius:10px;pointer-events:none;
-  box-shadow:0 0 0 4px var(--dap-accent), 0 0 0 9999px rgba(10,9,18,.55), 0 0 26px 4px rgba(124,92,255,.55);
+  box-shadow:0 0 0 4px var(--dap-accent), 0 0 26px 4px rgba(124,92,255,.55);
   transition:all .28s cubic-bezier(.4,0,.2,1);opacity:0;
 }
 .dap-spot.on{opacity:1;}
